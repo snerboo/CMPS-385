@@ -1,0 +1,79 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+// Insert a node at the given index
+int LinkedlistInsert(int data, int index, Node** head) {
+    Node* newNode = new Node();
+    newNode->data = data;
+    
+    if (index == 0) { // Insert at head
+        newNode->next = *head;
+        *head = newNode;
+        return 1;
+    }
+    
+    Node* temp = *head;
+    for (int i = 0; temp != nullptr && i < index - 1; i++)
+        temp = temp->next;
+
+    if (temp == nullptr) return -1; // Out of bounds
+
+    newNode->next = temp->next;
+    temp->next = newNode;
+    return 1;
+}
+
+// Delete a node at the given index
+int LinkedlistDelete(int index, Node** head) {
+    if (*head == nullptr) return -1; // Empty list
+    
+    Node* temp = *head;
+    if (index == 0) { // Delete head node
+        *head = temp->next;
+        delete temp;
+        return 1;
+    }
+
+    Node* prev = nullptr;
+    for (int i = 0; temp != nullptr && i < index; i++) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) return -1; // Out of bounds
+
+    prev->next = temp->next;
+    delete temp;
+    return 1;
+}
+
+// Helper function to print the list
+void printList(Node* head) {
+    while (head) {
+        cout << head->data << " -> ";
+        head = head->next;
+    }
+    cout << "NULL" << endl;
+}
+
+int main() {
+    Node* head = nullptr;
+    
+    LinkedlistInsert(10, 0, &head);
+    LinkedlistInsert(20, 1, &head);
+    LinkedlistInsert(30, 1, &head);
+    
+    cout << "Linked List: ";
+    printList(head);
+
+    LinkedlistDelete(1, &head);
+    cout << "After Deletion: ";
+    printList(head);
+
+    return 0;
+}
