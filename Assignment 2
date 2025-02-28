@@ -1,0 +1,131 @@
+#include <iostream>
+
+using namespace std;
+
+struct node
+{
+	int data;
+	node* next;
+	node* prev;
+};
+
+
+int doubleLinkedListInsert(int data, int index, node** head)
+{
+	node* newNode = new node;
+	newNode->data = data;
+	newNode->next = nullptr;
+	newNode->prev = nullptr;
+
+	if (index == 0)
+	{
+		newNode->next = *head;
+		if (*head != nullptr)
+		{
+			(*head) ->prev = newNode;
+		}
+		*head = newNode;
+		return 1;
+	}
+
+	node* temp = *head;
+	int i = 0;
+
+	while (temp != nullptr && i < index - 1)
+	{
+		temp = temp->next;
+		i++;
+	}
+
+	if (temp == nullptr)
+	{
+		delete newNode;
+		return -1;
+	}
+
+	newNode->next = temp->next;
+	newNode->prev = temp;
+
+	if (temp->next != nullptr) 
+	{
+		temp->next->prev = newNode;
+	}
+
+	temp->next = newNode;
+	return 1;
+}
+
+int doubleLinkedListDelete(int index, node** head) {
+	if (*head == nullptr)
+	{
+		return -1;
+	}
+
+	node* temp = *head;
+
+	
+	if (index == 0) {
+		*head = temp->next;
+		if (*head != nullptr) 
+		{
+			(*head)->prev = nullptr;
+		}
+		delete temp;
+		return 1; 
+	}
+
+	int i = 0;
+	while (temp != nullptr && i < index) 
+	{
+		temp = temp->next;
+		i++;
+	}
+
+	if (temp == nullptr) 
+	{
+		return -1;
+	}
+	
+	if (temp->prev != nullptr) {
+		temp->prev->next = temp->next;
+	}
+
+	if (temp->next != nullptr) {
+		temp->next->prev = temp->prev;
+	}
+
+	delete temp;
+	return 1;
+}
+
+void displayList(node* head) {
+	node* temp = head;
+
+	while (temp != nullptr)
+	{
+		cout << temp->data<<" ";
+		temp = temp->next;
+	}
+	cout << endl;
+}
+
+int main()
+{
+	node* head = nullptr;
+
+	doubleLinkedListInsert(1, 0, &head);
+	doubleLinkedListInsert(2, 1, &head);
+	doubleLinkedListInsert(3, 2, &head);
+	doubleLinkedListInsert(4, 3, &head);
+
+	cout << "List: ";
+	displayList(head);
+
+	doubleLinkedListDelete(3, &head); 
+	doubleLinkedListDelete(1, &head);
+
+	cout << "List after deletion: ";
+	displayList(head); 
+
+	return 0;
+}
