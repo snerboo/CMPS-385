@@ -1,0 +1,82 @@
+#include <iostream>
+
+using namespace std;
+
+const int MAX_STACK = 100;
+
+class Stack
+{
+public:
+	Stack()
+	{
+		top = -1;
+	}
+
+	bool isEmpty()
+	{
+		return top == -1;
+	}
+
+	int push(int T, Stack)
+	{
+		if (top >= MAX_STACK - 1)
+		{
+			cout << "Stack full!" << endl;
+			return -1;
+		}
+
+		else
+		{
+			items[++top] = T;
+			return 0;
+		}
+	}
+
+	int topAndPop(Stack)
+	{
+		if (isEmpty())
+		{
+			cout << "Stack empty!" << endl;
+			return -1;
+		}
+
+		else
+		{
+			return items[top--];
+		}
+	}
+
+	void displayStack()
+	{
+		for (int i = top; i >= 0; i--)
+		{
+			cout << items[i];
+			cout << endl;
+		}
+	}
+
+private:
+	int items[MAX_STACK];
+	int top;
+};
+
+int main()
+{
+	Stack stack;
+	stack.push(1, stack);
+	stack.push(2, stack);
+	stack.push(3, stack);
+
+	cout << "Stack after push operations: " << endl;
+	stack.displayStack();
+	cout << endl;
+
+	stack.topAndPop(stack);
+	stack.topAndPop(stack);
+
+	cout << "Stack after pop operations: " << endl;
+	stack.displayStack();
+	cout << endl;
+	
+	return 0;
+}
