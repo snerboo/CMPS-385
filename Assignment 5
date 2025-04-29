@@ -1,0 +1,146 @@
+#include <iostream>
+using namespace std;
+
+class Heap
+{
+public:
+    int heap[999];
+    int heapSize = 0;
+
+    void createHeap()
+    {
+        cout << "How many elements in the heap? ";
+        cin >> heapSize;
+        cout << "Enter the elements of the heap: ";
+        for (int i = 0; i < heapSize; i++)
+        {
+            cin >> heap[i];
+        }
+
+        // Build heap (heapify all non-leaf nodes)
+        for (int i = heapSize / 2 - 1; i >= 0; i--)
+        {
+            heapifyDownAt(i);
+        }
+
+        displayHeap();
+    }
+
+    void displayHeap()
+    {
+        cout << "Heap: ";
+        for (int i = 0; i < heapSize; i++)
+        {
+            cout << heap[i] << " ";
+        }
+        cout << endl;
+    }
+
+    void addItem()
+    {
+        if (heapSize >= 999) {
+            cout << "Heap is full!" << endl;
+            return;
+        }
+
+        cout << "Enter item to add to heap: ";
+        cin >> heap[heapSize];
+        heapSize++;
+        heapifyUp();
+
+        displayHeap(); // Show the updated heap
+    }
+
+    void heapifyUp()
+    {
+        int i = heapSize - 1;
+        while (i > 0 && heap[i] > heap[(i - 1) / 2]) // Check if new item is larger than its parent
+        {
+            swap(heap[i], heap[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    }
+
+    void removeMax()
+    {
+        if (heapSize <= 0) {
+            cout << "Heap is empty!" << endl;
+            return;
+        }
+
+        cout << "Removed max element: " << heap[0] << endl;
+        heapifyDown();
+
+        displayHeap(); // Show the updated heap
+    }
+
+    void heapifyDown()
+    {
+        if (heapSize <= 1) return;
+
+        heap[0] = heap[heapSize - 1]; // Replace root with last element
+        heapSize--; // Remove last element
+        heapifyDownAt(0);
+    }
+
+    void heapifyDownAt(int i)
+    {
+        while (2 * i + 1 < heapSize) // While at least left child exists
+        {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int largest = i;
+
+            if (left < heapSize && heap[left] > heap[largest])
+                largest = left;
+            if (right < heapSize && heap[right] > heap[largest])
+                largest = right;
+
+            if (largest != i)
+            {
+                swap(heap[i], heap[largest]);
+                i = largest;
+            }
+            else
+            {
+                break; // Heap property restored
+            }
+        }
+    }
+};
+
+int main()
+{
+    Heap h;
+    h.createHeap();
+
+    int choice;
+    do {
+        cout << "\nHeap Operations:" << endl;
+        cout << "1. Add an element" << endl;
+        cout << "2. Remove max element" << endl;
+        cout << "3. Display heap" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            h.addItem();
+            break;
+        case 2:
+            h.removeMax();
+            break;
+        case 3:
+            h.displayHeap();
+            break;
+        case 4:
+            cout << "Exiting program..." << endl;
+            break;
+        default:
+            cout << "Invalid choice!" << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
