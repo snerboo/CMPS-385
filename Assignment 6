@@ -1,0 +1,124 @@
+#include <iostream>
+
+using namespace std;
+
+
+// 0 Represents empty, -1 represents deleted
+const int tableSize = 907;
+int hashTable[tableSize];
+
+void initialize() // Make all spots in table empty
+{
+	for (int i = 0; i < tableSize; i++)
+	{
+		hashTable[i] = 0;
+	}
+}
+
+int myHash(int key)
+{
+	return key % tableSize;
+}
+
+int HashInsertion(int key)
+{
+	int index = myHash(key);
+
+	if (hashTable[index] == 0 || hashTable[index] == -1)
+	{
+		hashTable[index] = key;
+		cout << "Insertion successful." << endl;
+
+		return 0;
+	}
+
+	else
+	{
+		for (int i = 0; i < tableSize; i++) // Linear Probing
+		{
+			int probeIndex = (index + i) % tableSize;
+
+			if (hashTable[probeIndex] == 0 || hashTable[probeIndex] == -1)
+			{
+				hashTable[probeIndex] = key;
+				cout << "Insertion successful." << endl;
+				return 0;
+			}
+		}
+		cout << "Insertion unsuccessful." << endl;
+		return -1; //Failure
+	}
+}
+
+int HashDeletion(int key)
+{
+	int index = myHash(key);
+
+	if (hashTable[index] == key)
+	{
+		hashTable[index] = -1;
+		cout << "Deletion successful." << endl;
+
+		return 0;
+	}
+
+	else
+	{
+		for (int i = 0; i < tableSize; i++) // Linear Probing
+		{
+			int probeIndex = (index + i) % tableSize;
+
+			if (hashTable[probeIndex] == 0)
+			{
+				cout << "Deletion unsuccessful." << endl;
+				return -1;
+			}
+			else if (hashTable[probeIndex] == key)
+			{
+				hashTable[probeIndex] = -1;
+				cout << "Deletion successful." << endl;
+
+				return 0;
+			}	
+		}
+	}
+	cout << "Deletion unsuccessful" << endl;
+	return -1;
+}
+
+void printTable(int hashTable[])
+{
+	cout << "HashTable: ";
+	for (int i = 0; i < tableSize; i++)
+	{
+		if (hashTable[i] != 0 && hashTable[i] != -1)
+		{
+			cout << hashTable[i] << ", Index = " << i << ". ";
+		}
+	}
+	cout << endl;
+}
+
+int main()
+{
+	int key1 = 10234;
+	int key2 = 12345;
+	int key3 = 1000;
+	int key4 = 1907;
+
+	initialize();
+
+	HashInsertion(key1);
+	HashInsertion(key2);
+	HashInsertion(key3);
+	HashInsertion(key4);
+
+	printTable(hashTable);
+
+	HashDeletion(key1);
+	HashDeletion(key4);
+	printTable(hashTable);
+
+
+	return 0;
+}
