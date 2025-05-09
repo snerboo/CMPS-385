@@ -1,0 +1,115 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+	int data;
+	Node* left;
+	Node* right;
+};
+
+void PrintInOrder(Node* T)
+{
+	if (T == nullptr) return;
+
+	PrintInOrder(T->left);
+	cout << T->data << " ";
+	PrintInOrder(T->right);
+}
+
+
+int InsertBST(int x, Node*& T)
+{
+	if (T == nullptr)
+	{
+		T = new Node{ x, nullptr, nullptr };
+		return 1; //Success
+	}
+
+	if (x > T->data)
+	{
+		InsertBST(x, T->right);
+		return 1;
+	}
+
+	else if (x < T->data)
+	{
+		InsertBST(x, T->left);
+		return 1;
+	}
+
+	else
+	{
+		return -1; //Insertion unsuccessful, duplicate data
+	}
+
+}
+
+Node* FindMin(Node* T)
+{
+    while (T && T->left) T = T->left;
+    return T;
+}
+
+int DeleteBST(int x, Node*& T) {
+    if (T == nullptr) return 0; // Not found
+
+    if (x < T->data)
+    {
+        return DeleteBST(x, T->left);
+    }
+    else if (x > T->data)
+    {
+        return DeleteBST(x, T->right);
+    }
+    else
+    {
+        // Node found
+        if (!T->left && !T->right)
+        {
+            delete T;
+            T = nullptr;
+        }
+        else if (!T->left)
+        {
+            Node* temp = T;
+            T = T->right;
+            delete temp;
+        }
+        else if (!T->right)
+        {
+            Node* temp = T;
+            T = T->left;
+            delete temp;
+        }
+        else
+        {
+            Node* minRight = FindMin(T->right);
+            T->data = minRight->data;
+            return DeleteBST(minRight->data, T->right);
+        }
+        return 1; // Success
+
+
+    }
+}
+
+
+
+int main()
+{
+	Node* T = nullptr;
+
+	InsertBST(1, T);
+	InsertBST(2, T);
+	InsertBST(8, T);
+	InsertBST(5, T);
+
+	PrintInOrder(T);
+    cout << endl;
+
+    DeleteBST(8, T);
+    PrintInOrder(T);
+
+    
+}
