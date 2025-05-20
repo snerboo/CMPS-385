@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+
+struct Treenode
+{
+    int key;
+    Treenode* left;
+    Treenode* right;
+
+    Treenode(int k)
+    {
+        key = k;
+        left = right = nullptr;
+    }
+};
+
+Treenode* leftrotation(Treenode* node)
+{
+    if (node == nullptr || node->right == nullptr)
+    {
+        return node;
+    }
+
+    Treenode* newRoot = node->right;
+    node->right = newRoot->left;
+    newRoot->left = node;
+
+    return newRoot;
+}
+
+Treenode* rightrotation(Treenode* node)
+{
+    if (node == nullptr || node->left == nullptr)
+    {
+        return node;
+    }
+
+    Treenode* newRoot = node->left;
+    node->left = newRoot->right;
+    newRoot->right = node;
+
+    return newRoot;
+}
+
+void printPreorder(Treenode* root)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    cout << root->key << " ";
+    printPreorder(root->left);
+    printPreorder(root->right);
+}
+
+int main()
+{
+    Treenode* root = new Treenode(10);
+    root->right = new Treenode(20);
+
+    cout << "Original tree (Preorder): ";
+    printPreorder(root);
+    cout << endl;
+
+    root = leftrotation(root);
+
+    cout << "After left rotation (Preorder): ";
+    printPreorder(root);
+    cout << endl;
+
+    return 0;
+}
