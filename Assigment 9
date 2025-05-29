@@ -1,0 +1,97 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+const int ORDER = 4; // Max number of children per node
+
+struct BMinusTreeNode {
+    bool isLeaf;
+    vector<int> keys;
+    vector<BMinusTreeNode*> children;
+
+    BMinusTreeNode(bool leaf) : isLeaf(leaf) {}
+};
+
+class BMinusTree {
+    BMinusTreeNode* root;
+
+public:
+    BMinusTree() {
+        root = new BMinusTreeNode(true);
+    }
+
+    void insert(int key) {
+        if (root->keys.size() == ORDER - 1) {
+            BMinusTreeNode* newRoot = new BMinusTreeNode(false);
+            newRoot->children.push_back(root);
+            splitChild(newRoot, 0);
+            root = newRoot;
+        }
+        insertNonFull(root, key);
+    }
+
+    void insertNonFull(BMinusTreeNode* node, int key) {
+        if (node->isLeaf) {
+            node->keys.push_back(key);
+            sort(node->keys.begin(), node->keys.end());
+        }
+        else {
+            int i = 0;
+            while (i < node->keys.size() && key > node->keys[i]) i++;
+            if (node->children[i]->keys.size() == ORDER - 1) {
+                splitChild(node, i);
+                if (key > node->keys[i]) i++;
+            }
+            insertNonFull(node->children[i], key);
+        }
+    }
+
+    void splitChild(BMinusTreeNode* parent, int index) {
+        BMinusTreeNode* fullChild = parent->children[index];
+        BMinusTreeNode* newChild = new BMinusTreeNode(fullChild->isLeaf);
+
+        int mid = (ORDER - 1) / 2;
+        parent->keys.insert(parent->keys.begin() + index, fullChild->keys[mid]);
+
+        newChild->keys.assign(fullChild->keys.begin() + mid + 1, fullChild->keys.end());
+        fullChild->keys.resize(mid);
+
+        if (!fullChild->isLeaf) {
+            newChild->children.assign(fullChild->children.begin() + mid + 1, fullChild->children.end());
+            fullChild->children.resize(mid + 1);
+        }
+
+        parent->children.insert(parent->children.begin() + index + 1, newChild);
+    }
+
+    void printTree() {
+        printTreeRecursive(root, 0);
+    }
+
+private:
+    void printTreeRecursive(BMinusTreeNode* node, int depth) {
+        for (int i = 0; i < depth; i++) cout << "  ";
+        for (int k : node->keys) cout << k << " ";
+        cout << (node->isLeaf ? "(Leaf)" : "(Internal)") << endl;
+        if (!node->isLeaf) {
+            for (BMinusTreeNode* child : node->children)
+                printTreeRecursive(child, depth + 1);
+        }
+    }
+};
+
+int main() {
+    BMinusTree tree;
+
+    vector<int> keys = { 10, 20, 5, 6, 12, 30, 7, 17 };
+    for (int key : keys) {
+        cout << "Inserting " << key << "...\n";
+        tree.insert(key);
+        tree.printTree();
+        cout << "------------------\n";
+    }
+
+    return 0;
+}
